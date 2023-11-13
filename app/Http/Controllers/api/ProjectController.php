@@ -12,79 +12,74 @@ use Illuminate\Support\Facades\Validator;
 class ProjectController extends Controller
 {
     private function validate_data ($request){
-        $validator = Validator::make($request-> all(), [
-          /*
-         'user_id' => 'required',
-         'title' => 'required|min:10|max:250',
-         'description' => 'required|min:20|max:1000',
-         'categorie' => 'required',
-         */
-         'type' => 'required',
-         'name' => 'required',
-         'image' => 'required',
-         'technologies' => 'required',
-         'link' => 'required',
-         'version' => 'required',
-         'date_creation' => 'required',
-         'date_modifcation' => 'required'
-        ]);
+      $validator = Validator::make($request-> all(), [
+       'type' => 'required',
+       'name' => 'required',
+       'image' => 'required',
+       'technologies' => 'required',
+       'link' => 'required',
+       'version' => 'required',
+       'date_creation' => 'required',
+       'date_modifcation' => 'required'
+      ]);
+      
+      if($validator->fails())
+       return response()->json([
+         'validation_errors'=>$validator->messages(),
+         'message'=>$validator->messages(),
+       ]);
        
-        if($validator->fails())
-         return response()->json([
-           'validation_errors'=>$validator->messages(),
-           'message'=>$validator->messages(),
-         ]);
-         
-        return true;
+      return "";
     }
 
     public function add (Request $request){
 
-        if(!$this->validate_data($request)) return;
+      $validate = $this->validate_data($request);
+      if($validate !== "") return $validate;
 
-
-        $project = new Project;
-        $project->type = $request->input('type');
-        $project->name = $request->input('name');
-        $project->image = $request->input('image');
-        $project->technologies = $request->input('technologies');
-        $project->link = $request->input('link');
-        $project->version = $request->input('version');
-        $project->date_creation = $request->input('date_creation');
-        $project->date_modification = $request->input('date_modification');
-        $project->save();
-        return response()->json([
-            'status'=>200,
-            'message'=>'project saved successfully', 
-        ]);
+      $project = new Project;
+      $project->type = $request->input('type');
+      $project->name = $request->input('name');
+      $project->image = $request->input('image');
+      $project->technologies = $request->input('technologies');
+      $project->link = $request->input('link');
+      $project->version = $request->input('version');
+      $project->date_creation = $request->input('date_creation');
+      $project->date_modification = $request->input('date_modification');
+      $project->save();
+      return response()->json([
+          'status'=>200,
+          'message'=>'project saved successfully', 
+      ]);
     }  
 
     public function update (Request $request , $id){
 
-        if(!$this->validate_data($request)) return;
+      $validate = $this->validate_data($request);
+      if($validate !== "") return $validate;
 
-        $project = Project::find($id);
-        if($project){
-           $project->type = $request->input('type');
-           $project->name = $request->input('name');
-           $project->image = $request->input('image');
-           $project->technologies = $request->input('technologies');
-           $project->link = $request->input('link');
-           $project->version = $request->input('version');
-           $project->date_creation = $request->input('date_creation');
-           $project->date_modification = $request->input('date_modification');
-           $project->save();
-           return response()->json([
-               'status'=>200,
-               'message'=>'The project has been modified successfully', 
-           ]); 
-        }
-        else{
-            return response()->json([
-               'status'=>404,
-               'message'=>'project id not found', 
-            ]);
-        }
+      $project = Project::find($id);
+      if($project){
+         $project->type = $request->input('type');
+         $project->name = $request->input('name');
+         $project->image = $request->input('image');
+         $project->technologies = $request->input('technologies');
+         $project->link = $request->input('link');
+         $project->version = $request->input('version');
+         $project->date_creation = $request->input('date_creation');
+         $project->date_modification = $request->input('date_modification');
+         $project->save();
+         return response()->json([
+             'status'=>200,
+             'message'=>'The project has been modified successfully', 
+         ]); 
+      }
+      else{
+          return response()->json([
+             'status'=>404,
+             'message'=>'project id not found', 
+          ]);
+      }
     }
 
     public function findById($id){

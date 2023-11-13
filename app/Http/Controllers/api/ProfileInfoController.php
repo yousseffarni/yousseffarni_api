@@ -12,95 +12,90 @@ use Illuminate\Support\Facades\Validator;
 class ProfileInfoController extends Controller
 {
     private function validate_data ($request){
-        $validator = Validator::make($request-> all(), [
-          /*
-         'user_id' => 'required',
-         'title' => 'required|min:10|max:250',
-         'description' => 'required|min:20|max:1000',
-         'categorie' => 'required',
-         */
-         'type' => 'required',
-         'title' => 'required',
-         'value' => 'required',
-         'icon' => 'required',
-        ]);
+      $validator = Validator::make($request-> all(), [
+       'type' => 'required',
+       'title' => 'required',
+       'value' => 'required',
+       'icon' => 'required',
+      ]);
+      
+      if($validator->fails())
+       return response()->json([
+         'validation_errors'=>$validator->messages(),
+         'message'=>$validator->messages(),
+       ]);
        
-        if($validator->fails())
-         return response()->json([
-           'validation_errors'=>$validator->messages(),
-           'message'=>$validator->messages(),
-         ]);
-         
-        return true;
+      return "";
     }
 
     public function add (Request $request){
 
-        if(!$this->validate_data($request)) return;
+      $validate = $this->validate_data($request);
+      if($validate !== "") return $validate;
 
+      $profileInfo = new ProfileInfo;
+      $profileInfo->type = $request->input('type');
+      $profileInfo->title = $request->input('title');
+      $profileInfo->value = $request->input('value');
+      $profileInfo->icon = $request->input('icon');
+      $profileInfo->save();
+      return response()->json([
+          'status'=>200,
+          'message'=>'profileInfo saved successfully', 
+      ]);
+    }  
 
-        $profileInfo = new ProfileInfo;
+    public function update (Request $request , $id){
+
+      $validate = $this->validate_data($request);
+      if($validate !== "") return $validate;
+
+      $profileInfo = ProfileInfo::find($id);
+      if($profileInfo){
         $profileInfo->type = $request->input('type');
         $profileInfo->title = $request->input('title');
         $profileInfo->value = $request->input('value');
         $profileInfo->icon = $request->input('icon');
         $profileInfo->save();
         return response()->json([
-            'status'=>200,
-            'message'=>'profileInfo saved successfully', 
+          'status'=>200,
+          'message'=>'The profileInfo has been modified successfully', 
+        ]); 
+      }
+      else{
+        return response()->json([
+          'status'=>404,
+          'message'=>'profileInfo id not found', 
         ]);
-    }  
-
-    public function update (Request $request , $id){
-
-        if(!$this->validate_data($request)) return;
-
-        $profileInfo = ProfileInfo::find($id);
-        if($profileInfo){
-           $profileInfo->type = $request->input('type');
-           $profileInfo->title = $request->input('title');
-           $profileInfo->value = $request->input('value');
-           $profileInfo->icon = $request->input('icon');
-           $profileInfo->save();
-           return response()->json([
-               'status'=>200,
-               'message'=>'The profileInfo has been modified successfully', 
-           ]); 
-        }
-        else{
-            return response()->json([
-               'status'=>404,
-               'message'=>'profileInfo id not found', 
-            ]);
-        }
+      }
     }
 
     public function findById($id){
-        $profileInfo = ProfileInfo::find($id);
+      $profileInfo = ProfileInfo::find($id);
 
-        if($profileInfo)
-        return response()->json(['status'=>200, 'project'=>$profileInfo]); 
+      if($profileInfo)
+      return response()->json(['status'=>200, 'project'=>$profileInfo]); 
 
-        return response()->json(['status'=>404,'message'=>'profileInfo not found', ]); 
+      return response()->json(['status'=>404,'message'=>'profileInfo not found', ]); 
     }
 
     public function delete($id){
-        $profileInfo = ProfileInfo::find($id);
-        if(!$profileInfo)
-         return response()->json([
-            'status'=>404,
-            'message'=>'profileInfo id Non Trouver',
-         ]); 
-        $profileInfo->delete();
+      $profileInfo = ProfileInfo::find($id);
+      if(!$profileInfo)
+       return response()->json([
+        'status'=>404,
+        'message'=>'profileInfo id Non Trouver',
+       ]); 
+      $profileInfo->delete();
     }
     
 
     public function findAll(){
-        $profileInfos = ProfileInfo::all();
-        return response()->json([
-            'status'=>200,
-            'data'=>$profileInfos,
-        ]);
+      $profileInfos = ProfileInfo::all();
+      return response()->json([
+        'status'=>200,
+        'data'=>$profileInfos,
+      ]);
     }
 
     public function UploadImage(Request $request,$id)

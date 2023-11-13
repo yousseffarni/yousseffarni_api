@@ -6,98 +6,100 @@ use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
 use App\Models\Skill;
+use App\Models\Icon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class SkillController extends Controller
 {
     private function validate_data ($request){
-        $validator = Validator::make($request-> all(), [
-          /*
-         'user_id' => 'required',
-         'title' => 'required|min:10|max:250',
-         'description' => 'required|min:20|max:1000',
-         'categorie' => 'required',
-         */
-         'name'  => 'required',
-         'percentage'  => 'required',
-         'icon'  => 'required',
-        ]);
+      $validator = Validator::make($request-> all(), [
+       'name'  => 'required',
+       'percentage'  => 'required',
+       'icon'  => 'required',
+      ]);
+      
+      if($validator->fails())
+       return response()->json([
+         'validation_errors'=>$validator->messages(),
+         'message'=>$validator->messages(),
+       ]);
        
-        if($validator->fails())
-         return response()->json([
-           'validation_errors'=>$validator->messages(),
-           'message'=>$validator->messages(),
-         ]);
-         
-        return true;
+      return "";
     }
 
     public function add (Request $request){
 
-        if(!$this->validate_data($request)) return;
+      $validate = $this->validate_data($request);
+      if($validate !== "") return $validate;
 
+      $skill = new Skill;
+      $skill->name = $request->input('name');
+      $skill->percentage = $request->input('percentage');
+      $skill->icon = $request->input('icon');
+      $skill->save();
+      return response()->json([
+          'status'=>200,
+          'message'=>'skill saved successfully', 
+      ]);
+    }  
 
-        $skill = new Skill;
+    public function update (Request $request , $id){
+
+      $validate = $this->validate_data($request);
+      if($validate !== "") return $validate;
+
+      $skill = Skill::find($id);
+      if($skill){
         $skill->name = $request->input('name');
         $skill->percentage = $request->input('percentage');
         $skill->icon = $request->input('icon');
         $skill->save();
         return response()->json([
-            'status'=>200,
-            'message'=>'skill saved successfully', 
+          'status'=>200,
+          'message'=>'The skill has been modified successfully', 
+        ]); 
+      }
+      else{
+        return response()->json([
+          'status'=>404,
+          'message'=>'skill id not found', 
         ]);
-    }  
-
-    public function update (Request $request , $id){
-
-        if(!$this->validate_data($request)) return;
-
-        $skill = Skill::find($id);
-        if($skill){
-           $skill->name = $request->input('name');
-           $skill->percentage = $request->input('percentage');
-           $skill->icon = $request->input('icon');
-           $skill->save();
-           return response()->json([
-               'status'=>200,
-               'message'=>'The skill has been modified successfully', 
-           ]); 
-        }
-        else{
-            return response()->json([
-               'status'=>404,
-               'message'=>'skill id not found', 
-            ]);
-        }
+      }
     }
 
     public function findById($id){
-        $skill = Skill::find($id);
+      $skill = Skill::find($id);
 
-        if($skill)
-        return response()->json(['status'=>200, 'project'=>$skill]); 
+      if($skill)
+      return response()->json(['status'=>200, 'project'=>$skill]); 
 
-        return response()->json(['status'=>404,'message'=>'skill not found', ]); 
+      return response()->json(['status'=>404,'message'=>'skill not found', ]); 
     }
 
     public function delete($id){
-        $skill = Skill::find($id);
-        if(!$skill)
-         return response()->json([
-            'status'=>404,
-            'message'=>'skill id Non Trouver',
-         ]); 
-        $skill->delete();
+      $skill = Skill::find($id);
+      if(!$skill)
+       return response()->json([
+        'status'=>404,
+        'message'=>'skill id Non Trouver',
+       ]); 
+      $skill->delete();
     }
     
 
     public function findAll(){
-        $skills = Skill::all();
-        return response()->json([
-            'status'=>200,
-            'data'=>$skills,
-        ]);
+      $skills = Skill::all();
+
+      foreach($skills as $skill){
+        $icon = Icon::where('id', $skill->icon_id)->first();
+        $skill->icon = $icon->icon;
+      }
+
+      return response()->json([
+        'status'=>200,
+        'data'=>$skills,
+      ]);
     }
 
     public function UploadImage(Request $request,$id)

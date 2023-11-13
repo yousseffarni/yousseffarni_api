@@ -13,12 +13,6 @@ class CertificationController extends Controller
 {
     private function validate_data ($request){
         $validator = Validator::make($request-> all(), [
-          /*
-         'user_id' => 'required',
-         'title' => 'required|min:10|max:250',
-         'description' => 'required|min:20|max:1000',
-         'categorie' => 'required',
-         */
          'date_start' => 'required',
          'date_end' => 'required',
          'image' => 'required',
@@ -34,12 +28,13 @@ class CertificationController extends Controller
            'message'=>$validator->messages(),
          ]);
          
-        return true;
+        return "";
     }
 
     public function add (Request $request){
 
-        if(!$this->validate_data($request)) return;
+        $validate = $this->validate_data($request);
+        if($validate !== "") return $validate;
 
 
         $certification = new Certification;
@@ -59,7 +54,8 @@ class CertificationController extends Controller
 
     public function update (Request $request , $id){
 
-        if(!$this->validate_data($request)) return;
+        $validate = $this->validate_data($request);
+        if($validate !== "") return $validate;
 
         $certification = Certification::find($id);
         if($certification){

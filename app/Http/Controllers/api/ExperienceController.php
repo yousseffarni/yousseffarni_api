@@ -13,12 +13,6 @@ class ExperienceController extends Controller
 {
     private function validate_data ($request){
         $validator = Validator::make($request-> all(), [
-          /*
-         'user_id' => 'required',
-         'title' => 'required|min:10|max:250',
-         'description' => 'required|min:20|max:1000',
-         'categorie' => 'required',
-         */
          'company' => 'required',
          'image' => 'required',
          'type' => 'required',
@@ -34,12 +28,13 @@ class ExperienceController extends Controller
            'message'=>$validator->messages(),
          ]);
          
-        return true;
+        return "";
     }
 
     public function add (Request $request){
 
-        if(!$this->validate_data($request)) return;
+        $validate = $this->validate_data($request);
+        if($validate !== "") return $validate;
 
 
         $experience = new Experience;
@@ -59,7 +54,8 @@ class ExperienceController extends Controller
 
     public function update (Request $request , $id){
 
-        if(!$this->validate_data($request)) return;
+        $validate = $this->validate_data($request);
+      if($validate !== "") return $validate;
 
         $experience = Experience::find($id);
         if($experience){
