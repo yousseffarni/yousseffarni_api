@@ -10,8 +10,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 
-use App\Rules\PhoneNumber;
-
 class AuthController extends Controller
 {
 
@@ -20,22 +18,6 @@ class AuthController extends Controller
       if($user)
         return response()->json(['message'=>'Vous êtes authentifié','status'=>200],200);
        return response()->json(['message'=>'Vous n\'êtes pas authentifié','status'=>404]);
-    }
-
-    private function validate_data ($request){
-        $validator = Validator::make($request-> all(), [
-         'user_id' => 'required',
-         'title' => 'required|min:10|max:250',
-         'description' => 'required|min:20|max:1000',
-         'categorie' => 'required',
-        ]);
-       
-        if($validator->fails())
-         return response()->json([
-           'validation_errors'=>$validator->messages(),
-           'message'=>$validator->messages(),
-         ]);
-        return true;
     }
 
     public function Login(Request $request)
@@ -57,7 +39,7 @@ class AuthController extends Controller
           if(Hash::check($request->password, $user->password)){ 
             $token =  $user->createToken($user->username.'_Token')->plainTextToken;
             
-            return response() ->json([
+            return response()->json([
               'status'=>200,
               'token'=>$token,
               "user"=>$user,
@@ -66,7 +48,7 @@ class AuthController extends Controller
           }
         }
 
-        return response() ->json([
+        return response()->json([
             'status'=>404,
             'message'=>'username or password is incorrect', 
         ]);
@@ -80,11 +62,6 @@ class AuthController extends Controller
         'email' => 'required|email|unique:users,email',
         'username' => 'required|min:4|max:190|unique:users,username',
         'password' => 'required|min:8|max:20',
-        'phone_number' => 'required',// new PhoneNumber],
-        'phone_number2' => 'nullable',// new PhoneNumber],
-        'adresse' => 'required|min:10|max:500',
-        'country' => 'required',
-        'gender' => 'nullable|in:male,female',
        ]);
 
        if($validator->fails())
@@ -100,11 +77,6 @@ class AuthController extends Controller
         $user->email = $request->email;
         $user->username = $request->username;
         $user->password = Hash::make($request->password);
-        $user->phone_number = $request->phone_number;
-        $user->phone_number2 = $request->phone_number2;
-        $user->adresse = $request->adresse;
-        $user->country = $request->country;
-        $user->gender = $request->gender;
         $user->save();
 
         return response() ->json([
@@ -113,8 +85,7 @@ class AuthController extends Controller
         ]);
     }
 
-    public function Logout()
-    {
+    public function Logout(){
       //auth()->user()->tokens()->delete();*
       auth('web')->logout();
       return response()->json([

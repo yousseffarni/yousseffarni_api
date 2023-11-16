@@ -9,6 +9,7 @@ use App\Http\Controllers\api\ExperienceController;
 use App\Http\Controllers\api\ProfileInfoController;
 use App\Http\Controllers\api\ProjectController;
 use App\Http\Controllers\api\AuthController;
+use App\Http\Controllers\api\FetchDataController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,6 +37,8 @@ Route::get('/all_Experiences',[ExperienceController::class,'findAll']);
 // ProfileInfo
 Route::get('/all_ProfileInfos',[ProfileInfoController::class,'findAll']);
 
+// HTTP Requests Handler:
+Route::get('/send_get_request',[FetchDataController::class,'Send_GET_Request']);
 
 //Auth:
 Route::post('/Login',[AuthController::class,'Login']);
