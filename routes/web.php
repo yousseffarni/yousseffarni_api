@@ -20,28 +20,28 @@ use App\Http\Controllers\api\FetchDataController;
 |
 */
 
-Route::get('/api/all_Projects',[ProjectController::class,'findAll']);
+Route::get('/all_Projects',[ProjectController::class,'findAll']);
 
 // Certification
-Route::get('/api/all_Certifications',[CertificationController::class,'findAll']);
+Route::get('/all_Certifications',[CertificationController::class,'findAll']);
 
 // Skill
-Route::get('/api/all_Skills',[SkillController::class,'findAll']);
+Route::get('/all_Skills',[SkillController::class,'findAll']);
 
 // Experience
-Route::get('/api/all_Experiences',[ExperienceController::class,'findAll']);
+Route::get('/all_Experiences',[ExperienceController::class,'findAll']);
 
 // ProfileInfo
 Route::get('/api/all_ProfileInfos',[ProfileInfoController::class,'findAll']);
 
 // HTTP Requests Handler:
-Route::get('/api/send_get_request',[FetchDataController::class,'Send_GET_Request']);
+Route::get('/send_get_request',[FetchDataController::class,'Send_GET_Request']);
 
 //Auth:
-Route::post('/api/Login',[AuthController::class,'Login']);
-Route::post('/api/Logout',[AuthController::class,'Logout']);
-Route::post('/api/SignUp',[AuthController::class,'SignUp']);
-Route::post('/api/ChangePassword',[AuthController::class,'ChangePassword']);
+Route::post('/Login',[AuthController::class,'Login']);
+Route::post('/Logout',[AuthController::class,'Logout']);
+Route::post('/SignUp',[AuthController::class,'SignUp']);
+Route::post('/ChangePassword',[AuthController::class,'ChangePassword']);
 
 Route::get('/', function () {
     return view('welcome');
