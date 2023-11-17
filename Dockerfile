@@ -1,34 +1,20 @@
-# Use the official PHP image as the base image
-FROM php:8.2-fpm
+FROM richarvey/nginx-php-fpm:1.9.1
 
-# Set the working directory inside the container
-WORKDIR /var/www/html
-
-# Install dependencies
-RUN apt-get update && apt-get install -y \
-    git \
-    unzip \
-    libzip-dev \
-    && docker-php-ext-install zip pdo_mysql
-
-# Install Composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
-# Copy the composer.json and composer.lock files to leverage Docker cache
-COPY composer.json composer.lock ./
-
-# Install project dependencies
-RUN composer install --no-scripts --no-interaction --prefer-dist
-
-# Copy the application code to the container
 COPY . .
 
-# Generate the Laravel application key
-RUN php artisan key:generate
+# Image config
+ENV SKIP_COMPOSER 1
+ENV WEBROOT /var/www/html/public
+ENV PHP_ERRORS_STDERR 1
+ENV RUN_SCRIPTS 1
+ENV REAL_IP_HEADER 1
 
-# Set the appropriate permissions
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+# Laravel config
+ENV APP_ENV production
+ENV APP_DEBUG false
+ENV LOG_CHANNEL stderr
 
-# Expose port 9000 and start php-fpm server
-EXPOSE 9000
-CMD ["php-fpm"]
+# Allow composer to run as root
+ENV COMPOSER_ALLOW_SUPERUSER 1
+
+CMD ["/start.sh"]
