@@ -93,7 +93,7 @@ class SkillController extends Controller
 
       foreach($skills as $skill){
         $icon = Icon::where('id', $skill->icon_id)->first();
-        $skill->icon = $icon->icon;
+        $skill->IconName = $icon->name;
       }
 
       return response()->json([
@@ -102,8 +102,8 @@ class SkillController extends Controller
       ]);
     }
 
-    public function UploadImage(Request $request,$id)
-    {
+    public function UploadImage(Request $request,$id){
+
       $validator = Validator::make($request-> all(), [
         'image' => 'required|file|mimes:jpg,png,jpeg|max:2048', 
       ]);

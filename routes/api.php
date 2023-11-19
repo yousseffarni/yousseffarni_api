@@ -10,6 +10,7 @@ use App\Http\Controllers\api\ProfileInfoController;
 use App\Http\Controllers\api\ProjectController;
 use App\Http\Controllers\api\AuthController;
 use App\Http\Controllers\api\FetchDataController;
+use App\Http\Controllers\api\IconController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,6 +32,9 @@ Route::get('/all_Certifications',[CertificationController::class,'findAll']);
 // Skill
 Route::get('/all_Skills',[SkillController::class,'findAll']);
 
+// Icons:
+Route::get('/all_Icons',[IconController::class,'findAll']);
+
 // Experience
 Route::get('/all_Experiences',[ExperienceController::class,'findAll']);
 
@@ -38,13 +42,18 @@ Route::get('/all_Experiences',[ExperienceController::class,'findAll']);
 Route::get('/all_ProfileInfos',[ProfileInfoController::class,'findAll']);
 
 // HTTP Requests Handler:
-Route::get('/send_get_request',[FetchDataController::class,'Send_GET_Request']);
+Route::post('/send_get_request',[FetchDataController::class,'Send_GET_Request']);
+Route::post('/prepare_request',[FetchDataController::class,'prepare_request']);
 
 //Auth:
 Route::post('/Login',[AuthController::class,'Login']);
 Route::post('/Logout',[AuthController::class,'Logout']);
 Route::post('/SignUp',[AuthController::class,'SignUp']);
 Route::post('/ChangePassword',[AuthController::class,'ChangePassword']);
+
+
+Route::post('/send_email',[AuthController::class,'SendEmail']);
+
 
 Route::middleware(['auth:sanctum'])->group(function () {
     

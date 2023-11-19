@@ -25,7 +25,5 @@ class Skill extends Model
      *
      * @var array<int, string>
      */
-    protected $hidden = [
-        'icon_id',
-    ];
+    protected $hidden = [];
 }
