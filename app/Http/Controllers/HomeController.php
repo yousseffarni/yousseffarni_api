@@ -23,6 +23,10 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        //return view('home');
+        return response()->json([
+            'message'=>"Welcome to my laravel API",
+            "status"=> 200
+           ]); 
     }
 }
